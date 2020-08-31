@@ -15,7 +15,7 @@
 // - Evidenziare le festività nella lista
 
 $(document).ready(function () {
-    // Impostazione del moment locale
+    // Impostazione del moment locale (italiano)
     moment.locale('it');
     // Seleziono il mese di gennaio 2018
     var currentDate = moment('2018-01-01');
@@ -29,10 +29,10 @@ $(document).ready(function () {
         if (currentDate.get('month') == 0) {
             alert('Nessun mese da visualizzare');
         } else {
-            var newDate = currentDate.subtract(1, 'months');
+            currentDate.subtract(1, 'months');
             $('li').remove();
-            insertDays(newDate);
-            insertHolidays(newDate);
+            insertDays(currentDate);
+            insertHolidays(currentDate);
         }
     });
 
@@ -41,10 +41,10 @@ $(document).ready(function () {
         if (currentDate.get('month') == 11) {
             alert('Nessun mese da visualizzare');
         } else {
-            var newDate = currentDate.add(1, 'months');
+            currentDate.add(1, 'months');
             $('li').remove();
-            insertDays(newDate);
-            insertHolidays(newDate);
+            insertDays(currentDate);
+            insertHolidays(currentDate);
         }
     });
 });
@@ -55,7 +55,7 @@ function insertDays(data) {
     // Appendo 'mese + anno' nell'intestazione
     var month = data.format('MMMM');
     var year = data.format('YYYY');
-    $('h1.month').html(`${capitalize(month)} ${year}`);
+    $('h1.month').html(`${month} ${year}`);
 
     var daysMonth = data.daysInMonth();
 
@@ -92,12 +92,16 @@ function insertHolidays(data) {
             },
             success: function (obj) {
                 var holidays = obj.response;
-                for (var i = 0; i < holidays.length; i++) {
-                    var listItem = $(`li[data-full-date="${holidays[i].date}"]`);
-                    listItem.append(` - ${holidays[i].name}`);
-                    listItem.addClass('holiday');
-                }
-                // each
+                // for (var i = 0; i < holidays.length; i++) {
+                //     var listItem = $(`li[data-full-date="${holidays[i].date}"]`);
+                //     listItem.append(` - ${holidays[i].name}`);
+                //     listItem.addClass('holiday');
+                // }
+                // con each()
+                $(holidays).each(function (index, value) {
+                    var listItem = $(`li[data-full-date="${value.date}"]`);
+                    listItem.append(` - ${value.name}`).addClass('holiday');
+                })
             },
             error: function () {
                 alert('Errore');
@@ -108,11 +112,5 @@ function insertHolidays(data) {
 
 // Aggiunta di uno zero davanti ai numeri < 10
 function addZero(n) {
-    return n < 10 ? `0${n}` : n;
-}
-
-// Primo carattere di una stringa in maiuscolo
-function capitalize(str) {
-    var firstChar = str.charAt(0).toUpperCase();
-    return firstChar + str.slice(1).toLowerCase();
+    return n < 10 ? '0' + n : n;
 }
