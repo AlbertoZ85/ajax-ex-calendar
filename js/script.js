@@ -18,20 +18,44 @@ $(document).ready(function () {
     // Impostazione del moment locale
     moment.locale('it');
     // Seleziono il mese di gennaio 2018
-    var currentDate = moment('2018-01-01', 'LL');
+    var currentDate = moment('2018-01-01');
 
     // Invoco le funzioni che creano i giorni del mese ed evidenziano le festività
     insertDays(currentDate);
     insertHolidays(currentDate);
+
+    // Premendo il tasto 'prev' visualizzo il mese precedente (anno fissato)
+    $('#prev').click(function () {
+        if (currentDate.get('month') == 0) {
+            alert('Nessun mese da visualizzare');
+        } else {
+            var newDate = currentDate.subtract(1, 'months');
+            $('li').remove();
+            insertDays(newDate);
+            insertHolidays(newDate);
+        }
+    });
+
+    // Premendo il tasto 'next' visualizzo il mese successivo (anno fissato)
+    $('#next').click(function () {
+        if (currentDate.get('month') == 11) {
+            alert('Nessun mese da visualizzare');
+        } else {
+            var newDate = currentDate.add(1, 'months');
+            $('li').remove();
+            insertDays(newDate);
+            insertHolidays(newDate);
+        }
+    });
 });
 
 // *** FUNCTIONS *** //
 // Generazione dei giorni del mese
 function insertDays(data) {
     // Appendo 'mese + anno' nell'intestazione
-    var month = capitalize(data.format('MMMM'));
+    var month = data.format('MMMM');
     var year = data.format('YYYY');
-    $('h1.month').html(`${month} ${year}`);
+    $('h1.month').html(`${capitalize(month)} ${year}`);
 
     var daysMonth = data.daysInMonth();
 
@@ -84,10 +108,7 @@ function insertHolidays(data) {
 
 // Aggiunta di uno zero davanti ai numeri < 10
 function addZero(n) {
-    if (n < 10) {
-        return '0' + n;
-    }
-    return n;
+    return n < 10 ? `0${n}` : n;
 }
 
 // Primo carattere di una stringa in maiuscolo
