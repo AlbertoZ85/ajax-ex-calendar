@@ -19,39 +19,24 @@ $(document).ready(function () {
     moment.locale('it');
     // Seleziono il mese di gennaio 2018
     var currentDate = moment('2018-01-01');
+    console.log(currentDate);
 
     // Invoco le funzioni che creano i giorni del mese ed evidenziano le festività
     insertDays(currentDate);
     insertHolidays(currentDate);
 
     // Premendo il tasto 'prev' visualizzo il mese precedente (anno fissato)
-    $('#prev').click(function () {
-        if (currentDate.get('month') == 0) {
-            alert('Nessun mese da visualizzare');
-        } else {
-            currentDate.subtract(1, 'months');
-            $('li').remove();
-            insertDays(currentDate);
-            insertHolidays(currentDate);
-        }
-    });
+    $('#prev').click(currentDate, prev);
 
     // Premendo il tasto 'next' visualizzo il mese successivo (anno fissato)
-    $('#next').click(function () {
-        if (currentDate.get('month') == 11) {
-            alert('Nessun mese da visualizzare');
-        } else {
-            currentDate.add(1, 'months');
-            $('li').remove();
-            insertDays(currentDate);
-            insertHolidays(currentDate);
-        }
-    });
+    $('#next').click(currentDate, next);
 });
 
 // *** FUNCTIONS *** //
 // Generazione dei giorni del mese
 function insertDays(data) {
+    // Svuoto la lista dei giorni
+    $('li').remove();
     // Appendo 'mese + anno' nell'intestazione
     var month = data.format('MMMM');
     var year = data.format('YYYY');
@@ -97,6 +82,7 @@ function insertHolidays(data) {
                 //     listItem.append(` - ${holidays[i].name}`);
                 //     listItem.addClass('holiday');
                 // }
+
                 // con each()
                 $(holidays).each(function (index, value) {
                     var listItem = $(`li[data-full-date="${value.date}"]`);
@@ -108,6 +94,28 @@ function insertHolidays(data) {
             }
         }
     );
+}
+
+// Generazione mese precedente
+function prev(obj) {
+    if (obj.data.month() == 0) {
+        alert('Nessun mese da visualizzare');
+    } else {
+        obj.data.subtract(1, 'months');
+        insertDays(obj.data);
+        insertHolidays(obj.data);
+    }
+}
+
+// Generazione mese successivo
+function next(obj) {
+    if (obj.data.month() == 11) {
+        alert('Nessun mese da visualizzare');
+    } else {
+        obj.data.add(1, 'months');
+        insertDays(obj.data);
+        insertHolidays(obj.data);
+    }
 }
 
 // Aggiunta di uno zero davanti ai numeri < 10
